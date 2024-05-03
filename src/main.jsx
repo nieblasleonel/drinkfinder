@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
-import AppRouter from './router.tsx'
+import AppRouter from './mainrouter.tsx'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(

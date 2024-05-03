@@ -1,9 +1,9 @@
 import React from 'react'
 
-export const IndexPage = () => {
+export const FavoritesPage = () => {
   return (
     <>
-    <h1>Home</h1>
+   <h1>Favorites</h1>
     </>
   )
 }
