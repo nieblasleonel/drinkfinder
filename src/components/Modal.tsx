@@ -1,11 +1,32 @@
-import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useState } from 'react';
-import { useAppStore } from '../stores/useAppStore';
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, useState } from "react";
+import { useAppStore } from "../stores/useAppStore";
+import { Recipe } from "../types";
 
 export default function Modal() {
-  const modal = useAppStore((state)=>state.modal);
-  const closeModal = useAppStore((state)=>state.closeModal);
-  const recipe = useAppStore((state)=>state.selectedRecipe);
+  const modal = useAppStore((state) => state.modal);
+  const closeModal = useAppStore((state) => state.closeModal);
+  const selectedRecipe = useAppStore((state) => state.selectedRecipe);
+  const handleClickFavorite = useAppStore((state) => state.handleClickFavorite);
+  const favoriteExists = useAppStore((state) => state.favoriteExists);
+
+  const renderIngredients = ()=>{
+    const ingredients:JSX.Element[] = [];
+    for(let i=1; i<=6;i++){
+        const ingredient = selectedRecipe[`strIngredient${i}`];
+        const measure = selectedRecipe[`strMeasure${i}`];
+        
+        if(ingredient && measure){
+            ingredients.push(
+                <li key={i} className="text-lg font-normal">
+                    {ingredient} - {measure}
+                </li>
+            )
+        }
+    }
+    return ingredients;
+  }
+
   return (
     <>
       <Transition appear show={modal} as={Fragment}>
@@ -33,15 +54,48 @@ export default function Modal() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6" >
-                  <Dialog.Title as="h3" className="text-gray-900 text-4xl font-extrabold my-5 text-center">
-                      {recipe.strDrink}
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-gray-900 text-4xl font-extrabold my-5 text-center"
+                  >
+                    {selectedRecipe.strDrink}
                   </Dialog.Title>
-                  <Dialog.Title as="h3" className="text-gray-900 text-2xl font-extrabold my-5">
-                    
+                  <img
+                    src={selectedRecipe.strDrinkThumb}
+                    alt={`Image of ${selectedRecipe.strDrink}`}
+                    className="mx-auto w-96"
+                  />
+                  <Dialog.Title
+                    as="h3"
+                    className="text-gray-900 text-2xl font-extrabold my-5"
+                  >
+                    {renderIngredients}
                   </Dialog.Title>
-                  <Dialog.Title as="h3" className="text-gray-900 text-2xl font-extrabold my-5">
-                    Instrucciones
+                  <Dialog.Title
+                    as="h3"
+                    className="text-gray-900 text-2xl font-extrabold my-5"
+                  >
+                    <p>Instructions</p>
+                    <p className="text-lg font-normal">
+                      {selectedRecipe.strInstructions}
+                    </p>
+                    <div className="mt-5 flex justify-between gap-4">
+                        <button 
+                        type="button" 
+                        className="w-full rounded bg-gray-600 p-3 text-white font-bold shadow hover:bg-gray-500"
+                        onClick={closeModal}
+                        >Close</button>
+                        <button 
+                        type="button" 
+                        className="w-full rounded bg-orange-600 p-3 text-white font-bold shadow hover:bg-gray-500"
+                        onClick={()=>{
+                          handleClickFavorite(selectedRecipe)
+                          closeModal()
+                        }}
+                        >{favoriteExists(selectedRecipe.idDrink) ? 'Delete from Favorite' : 'Add to Favorites'}</button>
+                    </div>
+
                   </Dialog.Title>
                 </Dialog.Panel>
               </Transition.Child>
@@ -50,5 +104,5 @@ export default function Modal() {
         </Dialog>
       </Transition>
     </>
-  )
+  );
 }

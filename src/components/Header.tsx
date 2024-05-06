@@ -16,9 +16,10 @@ export const Header = () => {
   const isHome = useMemo(() => pathname === "/", [pathname]);
 
   const fetchCategories = useAppStore((state)=>state.fetchCategories);
-
   const categories = useAppStore((state)=>state.categories);
   const searchRecipes = useAppStore((state)=>state.searchRecipes);
+  const showNotification = useAppStore((state)=>state.showNotification);
+
 
   useEffect(() => {
     fetchCategories();
@@ -34,7 +35,10 @@ export const Header = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => { 
     e.preventDefault();
     if(Object.values(searchFilters).includes('')){
-      console.log('debe llenar todos los campos');   
+      showNotification({
+        text: 'Must complete all inputs',
+        error: true
+      })  
       return;
     }
 
